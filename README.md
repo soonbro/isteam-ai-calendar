@@ -2,13 +2,17 @@
 
 롯데건설 IS팀 AI 캘린더 - by. Soonbro
 
-![Alt text](isteam_ai_calendar_key_visual.png)
+![Alt text](images/isteam_ai_calendar_key_visual.png)
 
 > ## 🚧🏗️THIS PROJECT IS STILL WORK IN PROGRESS (WIP)🏗️🚧
 >
 > 🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧
 >
 > ⚠️ 아직 개발 중인 프로젝트입니다.
+>
+> 2024-08-01 - Add Model Select CLI and ADD Ollama models
+
+![Alt text](images/image.png)
 
 ## 사용법
 
@@ -27,6 +31,7 @@ $ vi .env
 
 - Google Calendar ID 세팅
 - OpenAI API Key
+- (Option) Ollama Host Server Address (default: localhost)
 
 ### Google Calendar API
 

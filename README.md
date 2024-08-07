@@ -14,6 +14,16 @@
 
 ![Alt text](images/image.png)
 
+## 기능 목록
+
+- [x] 구글 캘린더 연동
+- [x] OpenAI, Ollama LLM 모델 지원
+- [x] CLI 기반 일정 요약 (Complete)
+- [ ] 일정 요약 및 추가 질문 답변 (Chat)
+- [ ] API Backend Server (FastAPI)
+- [ ] UI Frontend APP (Next.js)
+- [ ] Desktop App
+
 ## 사용법
 
 ### Python 패키지 설치

@@ -51,7 +51,7 @@ def google_calendar_api_service():
         with open("token.json", "w") as token:
             token.write(creds.to_json())
     
-    #TODO: token이 유효해도 refresh_token으로 새로운 access_token 발급 받아 사용하자
+    #TODO: token이 유효해도 refresh_token으로 새로운 access_token 발급 받아 사용하록 수정 필요. 토큰 만료 시 대책 필요.
     
     service = build('calendar', 'v3', credentials=creds)
     return service

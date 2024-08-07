@@ -62,16 +62,44 @@ def load_chain(model):
             model=model,
             temperature=0.5,
         )
-    elif model == "Gemma2" or model == "EEVE":
+    elif model == "Gemma2" or model == "EEVE" or model == "qwen2":
         if not OLLAMA_HOST:
             print('OLLAMA HOST 서버 주소를 설정해주세요!')
             raise ValueError("You need to set up your OLLAMA_HOST in '.env' file!")
-        llm = ChatOllama(
-            model="EEVE",
-            temperature=0,
-            base_url=OLLAMA_HOST
-        )
+        try:
+            import socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #p = '(?:http.*://)?(?P<host>[^:/ ]+).?(?P<port>[0-9]*).*'
+            addr_temp = OLLAMA_HOST.replace("http://","")
+            addr_temp = addr_temp.replace("https://","")
+            addr_list = addr_temp.split(":")
+            addr_list[1] = int(addr_list[1])
+            addr = tuple(addr_list)
+            print(addr)
+            res = sock.connect_ex(addr)
+            if res == 0:
+                print(f"{OLLAMA_HOST} >>> CONNECTED")
+            else:
+                print(f"{OLLAMA_HOST} >>> NOT CONNECTED")
+                raise ConnectionError("Ollama Host 연결에 실패했습니다.")
+            sock.close()
 
-    llm_chain = prompt | llm
+        except Exception as e:
+            print("Ollama 연결 에러 발생:", e)
+            print("Please Check your Ollama Host URL")
+            print("App을 종료합니다.")
+            exit(-1)
+            
+
+        try:
+            llm = ChatOllama(
+                model="EEVE",
+                temperature=0.5,
+                base_url=OLLAMA_HOST
+            )
+        except Exception as e:
+            print(str(e))
+
+    llm_chain = few_shot_prompt | llm
 
     return llm_chain

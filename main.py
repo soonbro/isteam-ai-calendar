@@ -29,9 +29,10 @@ class AiCalendar:
 if __name__ == '__main__':
     print("""\
   _   _    __   _   _    ___  _  _  __   _   ___
- / \ | |  / _| / \ | |  | __|| \| ||  \ / \ | o \\
-| o || | ( (_ | o || |_ | _| | \\\\ || o ) o ||   /
-|_n_||_|  \__||_n_||___||___||_|\_||__/|_n_||_|\\\\
+ / \ | |  / _| / \ | |  | __|| \| ||  \ / \ |  ☆ \\
+| o || | ( (_ | o || |_ | _| | \\\\ || o ) o ||    /
+|_n_||_|  \__||_n_||___||___||_|\_||__/|_n_||_|\\_\\
+                                      - by. Soonbro
 """)
     print('APP Start!')
 
@@ -44,36 +45,28 @@ if __name__ == '__main__':
     select_llm_model = inquirer.select(
         message="어떤 모델을 사용하시겠습니까?:",
         choices=[Separator("[OpenAI]"),
-                 "GPT4o",
-                 "GPT4o-mini",
+                 Choice("gpt-4o","GPT4o"),
+                 Choice("gpt-4o-mini","GPT4o-mini"),
                  Separator(),
                  Separator("[Ollama]"),
-                 "Gemma2:9b", 
-                 "EEVE:10.8b",
+                 Choice("Gemma2","Gemma2:9b"),
+                 Choice("EEVE","EEVE:10.8b"),
+                 Choice("qwen2","Qwen2:7b"),
                  Separator(),
                  Choice(value=None, name="Exit")],
-        default=None,
-        style=inquirer_style
+        default="gpt-4o-mini",
+        style=inquirer_style,
+        border=True
         )
     selected_llm_model = select_llm_model.execute()
 
     if not selected_llm_model:
         print("모델을 선택하지 않았습니다. 프로그램을 종료합니다.")
         exit()
-    elif selected_llm_model == "GPT4o":
-        print("GPT4o 모델을 사용하여 일정을 정리하겠습니다!")
-        #app.set_model("gpt-4o")
-        app.model = "gpt-4o"
-    elif selected_llm_model == "GPT4o-mini":
-        print("GPT4o-mini 모델을 사용하여 일정을 정리하겠습니다!")
-        #app.set_model("gpt-4o-mini")
-        app.model = "gpt-4o-mini"
-    elif selected_llm_model == "Gemma2:9b":
-        #app.set_model("Gemma2")
-        app.model = "Gemma2"
-    elif selected_llm_model == "EEVE:10.8b":
-        #app.set_model("EEVE")
-        app.model = "EEVE"
+    else:
+        selected_llm_name = select_llm_model.content_control.selection["name"]
+        print(f"{selected_llm_name} 모델을 사용하여 일정을 정리하겠습니다!")
+        app.model = selected_llm_model
 
     ######################################
     # EXECUTE QUERY
@@ -107,11 +100,15 @@ if __name__ == '__main__':
             #print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
             #print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
     
-    elif app.model == "Gemma2" or app.model ==  "EEVE":
+    elif app.model == "Gemma2" or app.model ==  "EEVE" or app.model == "qwen2":
         # stream 사용 스트리밍 방식으로 각 토큰을 출력. (실시간 출력)
         answer = chain.stream(question)
         for token in answer:
             print(token.content, end="", flush=True)
 
-    print('\n\n\nAI가 정리한 일정이 도움이 되셨나요?\n\n성능 향상에 도움을 주세요!\n\nhttps://github.com/soonbro/isteam-ai-calendar\n')
+    print('\n\n\nAI가 정리한 일정이 도움이 되셨나요?\n성능 향상에 도움을 주세요!\n')
+    color_print([("class:title", "* Github : "),
+                 ("class:url", "https://github.com/soonbro/isteam-ai-calendar\n"),
+                 ],style={"url": "#ffed72", "title":"#A2E57B"})
+    
     exit()

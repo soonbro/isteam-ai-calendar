@@ -36,7 +36,7 @@ example_prompt = PromptTemplate.from_template(
 few_shot_prompt = FewShotPromptTemplate(
     examples=prompts.examples,
     example_prompt=example_prompt,
-    suffix="Question:\n{question}\nAnswer:",
+    suffix="Question:\n{question}\n답변 마지막에는 관련 유머를 추가해 줘. 유머는 인터넷 커뮤니티 디시인사이드 스타일의 매운 맛으로 부탁해.\n\nAnswer:",
     input_variables=["question"],
 )
 
@@ -69,13 +69,15 @@ def load_chain(model):
         try:
             import socket
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #p = '(?:http.*://)?(?P<host>[^:/ ]+).?(?P<port>[0-9]*).*'
+            # .env의 OLLAMA_HOST가 http://HOST:PORT 형식인데 socket으로 연결 체크 하려면 (HOST,PORT) 튜플 형식이 필요.
+            # 파싱 방법 1 : urllib.parse.urlparse 모듈 사용
+            # 파싱 방법 2 : 정규식 사용 p = '(?:http.*://)?(?P<host>[^:/ ]+).?(?P<port>[0-9]*).*'
+            # 귀찮다 그냥 대충 해보자
             addr_temp = OLLAMA_HOST.replace("http://","")
-            addr_temp = addr_temp.replace("https://","")
+            addr_temp = addr_temp.replace("https://","") # 혹시나 https일 경우
             addr_list = addr_temp.split(":")
             addr_list[1] = int(addr_list[1])
             addr = tuple(addr_list)
-            print(addr)
             res = sock.connect_ex(addr)
             if res == 0:
                 print(f"{OLLAMA_HOST} >>> CONNECTED")
@@ -85,6 +87,7 @@ def load_chain(model):
             sock.close()
 
         except Exception as e:
+            #연결 예외 발생 시 종료
             print("Ollama 연결 에러 발생:", e)
             print("Please Check your Ollama Host URL")
             print("App을 종료합니다.")

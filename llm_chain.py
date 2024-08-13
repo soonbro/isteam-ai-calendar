@@ -1,46 +1,64 @@
 import os.path
 from dotenv import load_dotenv
 
+##### OpenAI #####
 #from langchain_openai import OpenAI
 from langchain_openai import ChatOpenAI
 
+##### Ollama #####
 #from langchain_ollama import ChatOllama
 #from langchain_ollama.llms import OllamaLLM
 from langchain_community.chat_models import ChatOllama
 
+##### Parser #####
+from langchain_core.output_parsers import StrOutputParser
+
+##### Prompt Template #####
 from langchain_core.prompts import PromptTemplate
 #from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts.few_shot import FewShotPromptTemplate
 
-import prompts
+##### My Prompt #####
+import prompts #./prompt.py
 
 # .env 파일 환경변수 로드
 load_dotenv()
 
 # OpenAI API key 불러오기
 OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
+"""OpenAI API Key"""
 
 # Ollama Host 서버 주소
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST")
+"""OLLAMA Host Server [ IP:PORT ]"""
 
-#ollama_llm = OllamaLLM(model="EEVE",base_url=OLLAMA_HOST)
 
-#프롬프트 설정
+##############################################################
+#  프롬프트 설정
+##############################################################
+zero_shot_template = PromptTemplate.from_template(prompts.template)
+"""Zero-Shot Prompt"""
+
 prompt = PromptTemplate.from_template(prompts.template)
+"""One-Shot Prompt"""
 
 example_prompt = PromptTemplate.from_template(
     "Question:\n{question}\nAnswer:\n{answer}"
 )
 
-# 퓨샷 프롬프트
+
 few_shot_prompt = FewShotPromptTemplate(
     examples=prompts.examples,
     example_prompt=example_prompt,
-    suffix="Question:\n{question}\n답변 마지막에는 관련 유머를 추가해 줘. 유머는 인터넷 커뮤니티 디시인사이드 스타일의 매운 맛으로 부탁해.\n\nAnswer:",
+    suffix="Question:\n{question}\n답변 마지막에는 [오늘의 한 마디]라는 타이틀 아래에 답변과 관련된 유머를 추가해 줘.\n\nAnswer:",
     input_variables=["question"],
 )
+"""Few-Shot Prompt"""
 
 
+##############################################################
+#  체인
+##############################################################
 def load_chain(model):
     """
     프롬프트와 llm으로 langchain 생성  
@@ -60,7 +78,7 @@ def load_chain(model):
         # OpenAI gpt-4o-mini 모델 설정
         llm = ChatOpenAI(
             model=model,
-            temperature=0.5,
+            temperature=0.7,
         )
     elif model == "Gemma2" or model == "EEVE" or model == "qwen2":
         if not OLLAMA_HOST:
@@ -103,6 +121,40 @@ def load_chain(model):
         except Exception as e:
             print(str(e))
 
-    llm_chain = few_shot_prompt | llm
+    #parser = StrOutputParser()
+    llm_chain = few_shot_prompt | llm #| parser
 
     return llm_chain
+
+
+
+def load_chain_test():
+    """
+    프롬프트와 llm으로 langchain 생성  
+    (Default : gpt4o-mini, need OpenAI API Key)
+
+    Args:
+      model: string, llm model name.
+    Returns:
+      llm_chain: Any, langchain's llm model chain
+    """
+    # 템플릿 정의 # 프롬프트 설정
+    prompt = PromptTemplate.from_template(prompts.template)
+
+    # 모델 생성
+    model = ChatOpenAI(
+             #  api_key = OPENAI_KEY
+             #, 
+             temperature = 0.7
+             #, streaming   = True
+             #, batch_size  = 50
+             , model="gpt-4o-mini"
+             )
+
+    # 파서 생성 - (이게 필요한가?)    
+    parser = StrOutputParser()
+
+    # 체인 생성
+    chain = prompt | model | parser
+
+    return chain

@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from google_calendar import get_recent_event, google_calendar_api_service
 
 from constants import *
-from llm_chain import load_chain, load_chain_test, OPENAI_MODELS, OLLAMA_MODELS
+from llm_chain import load_chain, OPENAI_MODELS, OLLAMA_MODELS
 
 # API Key가 없으면 오류 출력 후 종료
 if not OPENAI_KEY:
@@ -99,20 +99,6 @@ def cal_cost(model_name,token_usage):
         "completion_cost":f"${completion_cost:.4f}",
         "total_cost":f"${total_cost:.4f}",
     }
-
-
-@app.post("/api/test")
-async def ask_question(request: AskRequest):
-    """
-    gpt-4o-mini 모델로 일정 요약
-    """
-    try:
-        answer = load_chain_test().invoke(request.question)
-        return {"question": request.question, "answer": answer}
-    except HTTPException as http_error:
-        raise http_error
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 @app.get("/api/get_recent_event")
 async  def  get_recent_event_endpoint ():

@@ -1,25 +1,9 @@
-import os
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
-
-from langchain_core.prompts import PromptTemplate
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.prompts.few_shot import FewShotPromptTemplate
-
-from langchain_openai import OpenAI, ChatOpenAI
-
 from pydantic import BaseModel
-import json
 from google_calendar import get_recent_event, google_calendar_api_service
-from llm_chain import load_chain, few_shot_prompt, load_chain_test
-import prompts
 
-# .env 파일 환경변수 로드
-load_dotenv()
-
-# OpenAI API key 불러오기
-OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
+from constants import *
+from llm_chain import load_chain, load_chain_test, OPENAI_MODELS, OLLAMA_MODELS
 
 # API Key가 없으면 오류 출력 후 종료
 if not OPENAI_KEY:
@@ -40,25 +24,10 @@ class SummaryRequest(BaseModel):
     model: str
     question: str
 
-MODEL_COST_PER_1K_TOKENS = {
-        # GPT-4o-mini input
-        "gpt-4o-mini": 0.00015,
-        "gpt-4o-mini-2024-07-18": 0.00015,
-        # GPT-4o-mini output
-        "gpt-4o-mini-completion": 0.0006,
-        "gpt-4o-mini-2024-07-18-completion": 0.0006,
-        # GPT-4o input
-        "gpt-4o": 0.005,
-        "gpt-4o-2024-05-13": 0.005,
-        # GPT-4o output
-        "gpt-4o-completion": 0.015,
-        "gpt-4o-2024-05-13-completion": 0.015,
-    }
-
 def standardize_model_name(
-    model_name: str,
-    is_completion: bool = False,
-) -> str:
+        model_name: str,
+        is_completion: bool = False,
+    ) -> str:
     """
     Standardize the model name to a format that can be used in the OpenAI API.
 
@@ -104,19 +73,19 @@ def get_openai_token_cost_for_model(
         Cost in USD.
     """
     model_name = standardize_model_name(model_name, is_completion=is_completion)
-    if model_name not in MODEL_COST_PER_1K_TOKENS:
+    if model_name not in OPENAI_MODEL_COST_PER_1K_TOKENS:
         raise ValueError(
             f"Unknown model: {model_name}. Please provide a valid OpenAI model name."
-            "Known models are: " + ", ".join(MODEL_COST_PER_1K_TOKENS.keys())
+            "Known models are: " + ", ".join(OPENAI_MODEL_COST_PER_1K_TOKENS.keys())
         )
-    return MODEL_COST_PER_1K_TOKENS[model_name] * (num_tokens / 1000)
+    return OPENAI_MODEL_COST_PER_1K_TOKENS[model_name] * (num_tokens / 1000)
 
 def cal_cost(model_name,token_usage):
     # compute tokens and cost for this request
     completion_tokens = token_usage.get("completion_tokens", 0)
     prompt_tokens = token_usage.get("prompt_tokens", 0)
     
-    if model_name in MODEL_COST_PER_1K_TOKENS:
+    if model_name in OPENAI_MODEL_COST_PER_1K_TOKENS:
         completion_cost = get_openai_token_cost_for_model(
             model_name, completion_tokens, is_completion=True
         )
@@ -126,9 +95,9 @@ def cal_cost(model_name,token_usage):
         prompt_cost = 0
     total_cost = prompt_cost + completion_cost
     return {
-        "prompt_cost":prompt_cost,
-        "completion_cost":completion_cost,
-        "total_cost":total_cost,
+        "prompt_cost":f"${prompt_cost:.4f}",
+        "completion_cost":f"${completion_cost:.4f}",
+        "total_cost":f"${total_cost:.4f}",
     }
 
 
@@ -154,16 +123,34 @@ async  def  get_recent_event_endpoint ():
 
 @app.post("/api/summary")
 async def summarize_schedule(request: SummaryRequest):
+    """
+    `LLM model`으로 일정 요약
+
+    Args:
+        request: SummaryRequest
+
+    Returns:
+        {
+            question: 일정,
+            answer: AI 일정 요약 내용,
+            cost: OpenAI API Usage Cost
+        }
+    
+    """
     try:
         answer = load_chain(request.model).invoke(request.question)
-        print(answer.response_metadata["model_name"])
-        print(answer.response_metadata["token_usage"])
-        cost=cal_cost(answer.response_metadata["model_name"], answer.response_metadata["token_usage"])
-        return {
-            "question": request.question,
-            "answer": answer.content,
-            "cost": cost
-        }
+        if request.model in OPENAI_MODELS:
+            cost=cal_cost(answer.response_metadata["model_name"], answer.response_metadata["token_usage"])
+            return {
+                "question": request.question,
+                "answer": answer.content,
+                "cost": cost
+            }
+        elif request.model in OLLAMA_MODELS:
+            return {
+                "question": request.question,
+                "answer": answer.content,
+            }
     except HTTPException as http_error:
         raise http_error
     except Exception as e:

@@ -1,6 +1,4 @@
-import os.path
-from dotenv import load_dotenv
-
+from constants import *
 ##### OpenAI #####
 #from langchain_openai import OpenAI
 from langchain_openai import ChatOpenAI
@@ -20,18 +18,6 @@ from langchain_core.prompts.few_shot import FewShotPromptTemplate
 
 ##### My Prompt #####
 import prompts #./prompt.py
-
-# .env 파일 환경변수 로드
-load_dotenv()
-
-# OpenAI API key 불러오기
-OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
-"""OpenAI API Key"""
-
-# Ollama Host 서버 주소
-OLLAMA_HOST = os.environ.get("OLLAMA_HOST")
-"""OLLAMA Host Server [ IP:PORT ]"""
-
 
 ##############################################################
 #  프롬프트 설정
@@ -70,7 +56,7 @@ def load_chain(model):
       llm_chain: Any, langchain's llm model chain
     """
     print(f'{model} 모델을 불러오고 있습니다.')
-    if model == "gpt-4o" or model == "gpt-4o-mini":
+    if model in OPENAI_MODELS:
         # OpenAI API Key가 없으면 오류 출력 후 종료
         if not OPENAI_KEY:
             print('OpenAI API 키를 입력하세요!')
@@ -80,11 +66,14 @@ def load_chain(model):
             model=model,
             temperature=0.7,
         )
-    elif model == "Gemma2" or model == "EEVE" or model == "qwen2":
+    elif model in OLLAMA_MODELS:
         if not OLLAMA_HOST:
             print('OLLAMA HOST 서버 주소를 설정해주세요!')
             raise ValueError("You need to set up your OLLAMA_HOST in '.env' file!")
         try:
+            """
+            OLLAMA HOST 서버 연결 확인
+            """
             import socket
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             # .env의 OLLAMA_HOST가 http://HOST:PORT 형식인데 socket으로 연결 체크 하려면 (HOST,PORT) 튜플 형식이 필요.
@@ -111,11 +100,10 @@ def load_chain(model):
             print("App을 종료합니다.")
             exit(-1)
             
-
         try:
             llm = ChatOllama(
-                model="EEVE",
-                temperature=0.5,
+                model=model,
+                temperature=0.7,
                 base_url=OLLAMA_HOST
             )
         except Exception as e:
@@ -125,36 +113,3 @@ def load_chain(model):
     llm_chain = few_shot_prompt | llm #| parser
 
     return llm_chain
-
-
-
-def load_chain_test():
-    """
-    프롬프트와 llm으로 langchain 생성  
-    (Default : gpt4o-mini, need OpenAI API Key)
-
-    Args:
-      model: string, llm model name.
-    Returns:
-      llm_chain: Any, langchain's llm model chain
-    """
-    # 템플릿 정의 # 프롬프트 설정
-    prompt = PromptTemplate.from_template(prompts.template)
-
-    # 모델 생성
-    model = ChatOpenAI(
-             #  api_key = OPENAI_KEY
-             #, 
-             temperature = 0.7
-             #, streaming   = True
-             #, batch_size  = 50
-             , model="gpt-4o-mini"
-             )
-
-    # 파서 생성 - (이게 필요한가?)    
-    parser = StrOutputParser()
-
-    # 체인 생성
-    chain = prompt | model | parser
-
-    return chain

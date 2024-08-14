@@ -1,6 +1,3 @@
-import os.path
-from dotenv import load_dotenv
-
 from InquirerPy import inquirer, get_style
 from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
@@ -8,15 +5,10 @@ from InquirerPy.utils import color_print
 
 from langchain_community.callbacks.manager import get_openai_callback
 
-
 from google_calendar import get_recent_event, google_calendar_api_service
 
-
 from llm_chain import load_chain
-from prompts import examples, template
-
-# .env 파일 환경변수 로드
-load_dotenv()
+from constants import *
 
 class AiCalendar:
     def __init__(self):
@@ -24,7 +16,6 @@ class AiCalendar:
 
     def set_model(self, model_name:str):
         self.model = model_name
-
 
 if __name__ == '__main__':
     print("""\
@@ -83,7 +74,7 @@ if __name__ == '__main__':
     print(question)
     print('AI가 일정을 정리하고 있습니다.\n-------------------------------\n')
     
-    if app.model == "gpt-4o" or app.model == "gpt-4o-mini":
+    if app.model in OPENAI_MODELS:
         # stream 사용 스트리밍 방식으로 각 토큰을 출력. (실시간 출력)
         answer = chain.stream(question)
         for token in answer:
@@ -100,7 +91,7 @@ if __name__ == '__main__':
             #print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
             #print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
     
-    elif app.model == "Gemma2" or app.model ==  "EEVE" or app.model == "qwen2":
+    elif app.model in OLLAMA_MODELS:
         # stream 사용 스트리밍 방식으로 각 토큰을 출력. (실시간 출력)
         answer = chain.stream(question)
         for token in answer:

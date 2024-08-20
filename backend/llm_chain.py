@@ -17,7 +17,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.prompts.few_shot import FewShotPromptTemplate
 
 ##### My Prompt #####
-import prompts #./prompt.py
+import prompts as prompts #./prompt.py
 
 ##############################################################
 #  프롬프트 설정

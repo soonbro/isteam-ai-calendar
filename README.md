@@ -10,9 +10,8 @@
 >
 > ⚠️ 아직 개발 중인 프로젝트입니다.
 >
-> 2024-08-01 - Add Model Select CLI and ADD Ollama models
-
-![Alt text](images/image.png)
+> - 2024-08-01 - Add Model Select CLI and ADD Ollama models
+> - 2024-08-20 - Add Web Frontend
 
 ## 기능 목록
 
@@ -20,28 +19,79 @@
 - [x] OpenAI, Ollama LLM 모델 지원
 - [x] CLI 기반 일정 요약 (Complete)
 - [ ] 일정 요약 및 추가 질문 답변 (Chat)
-- [ ] API Backend Server (FastAPI)
-- [ ] UI Frontend APP (Next.js)
+- [x] API Backend Server (FastAPI)
+- [x] UI Frontend APP (Next.js)
 - [ ] Desktop App
 
-## 사용법
+## CLI
+
+![CLI App](images/image.png)
+
+### Command (Post Install)
+
+```bash
+$ cd backend
+$ . .venv/bin/activate
+$ python3 main.py
+```
+
+## Web
+
+![Web App](https://private-user-images.githubusercontent.com/37871515/359348990-7411c7ba-7e3f-4834-b507-aefbc8f35d9d.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjQzMDk5NjMsIm5iZiI6MTcyNDMwOTY2MywicGF0aCI6Ii8zNzg3MTUxNS8zNTkzNDg5OTAtNzQxMWM3YmEtN2UzZi00ODM0LWI1MDctYWVmYmM4ZjM1ZDlkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA4MjIlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwODIyVDA2NTQyM1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTYzZDhmY2VhMDc4NzhhNWU5MzdhMjg3NjRlNmJmY2IwMTNmZDA0MDdmZWMzYjk0NTM2Y2MzYjdjODZmYzQwMGUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.hrR6W2qs8WsykSnZTYsgmmKt37DO7RZqhl3RRPt7YYg)
+
+### Command (Post Install)
+
+```bash
+$ cd frontend
+$ pnpm dev
+```
+
+# 사용법 (How To Use)
+
+## Install (Backend)
+
+### Clone Repository
+
+```bash
+git clone https://github.com/soonbro/isteam-ai-calendar.git
+```
+
+### Python 가상환경 세팅
+
+```bash
+$ cd backend
+$ python -m venv .venv
+```
+
+Windows
+
+```bash
+. .venv/Scripts/activate
+```
+
+Linux or Mac
+
+```bash
+. .venv/bin/activate
+```
 
 ### Python 패키지 설치
 
 ```bash
-pip install -r requirements.txt
+$ (.venv) pip install -r requirements.txt
 ```
 
 ### 환경변수 세팅 (set ENV)
 
+- CAL_ID_XXXX : Google Calendar ID 세팅
+- OPENAI_API_KEY : OpenAI API Key
+- OLLAMA_HOST (Option) : Ollama Host Server Address (default: localhost)
+
 ```bash
+$ cd backend
 $ cp .env.example .env
 $ vi .env
 ```
-
-- Google Calendar ID 세팅
-- OpenAI API Key
-- (Option) Ollama Host Server Address (default: localhost)
 
 ### Google Calendar API
 
@@ -49,12 +99,36 @@ $ vi .env
 사용자 인증정보 생성 후 `credentials.json` 파일을 받아 프로젝트 루트 경로에 위치.  
 (Set Google Calendar API and OAuth. `credentials.json` File to Project root folder.)
 
-### 실행 (UI 개발 예정)
+### CLI 실행
 
 ```
 $ python main.py
+or
 $ python3 main.py
 ```
+
+---
+
+## Install (Frontend)
+
+package manager : pnpm
+
+### 패키지 의존성 설치 (Install Package Dependencies)
+
+```
+$ cd frontend
+$ pnpm i
+```
+
+### 개발 서버 실행 (Run Dev Server)
+
+```
+$ pnpm dev
+```
+
+http://localhost:3000/
+
+![Dark Mode](images/dark-mode.png)
 
 ---
 

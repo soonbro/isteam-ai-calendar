@@ -24,6 +24,7 @@ import Textarea from "@/components/ui/textarea";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { ModeToggle } from "@/components/mode-toggle";
 
 //import ThemeToggle from "@/components/ThemeToggle";
 
@@ -120,26 +121,29 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-12 bg-bg dark:bg-darkBg overflow-hidden">
+    <main className="flex min-h-screen flex-col items-center px-10 bg-bg dark:bg-secondaryBlack overflow-hidden">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit dark:text-darkText lg:static lg:w-[320px] lg:justify-between lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 font-mono font-bold">
+        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit dark:text-darkText lg:static lg:w-[320px] lg:justify-between lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-darkBg font-mono font-bold">
           건설IS팀 AI Calendar 일정 요약
           {/*<ThemeToggle />*/}
         </p>
 
-        <div className="fixed bottom-0 left-0 flex h-24 w-full mt-4 mr-4 overflow-visible items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://github.com/soonbro/isteam-ai-calendar"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="dark:text-white select-none none">{"By "}</span>
-            <em className="bg-main">Soonbro</em>
-            <div className="flex flex-row items-center justify-center w-full">
-              <AnimatedTooltip items={soonbro} />
-            </div>
-          </a>
+        <div className="fixed bottom-0 left-0 flex h-24 w-full mt-4 overflow-visible items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
+          <div className="flex flex-row place-items-center gap-0 lg:p-0">
+            <a
+              className="pointer-events-none lg:pointer-events-auto flex place-items-center gap-2 p-8"
+              href="https://github.com/soonbro/isteam-ai-calendar"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="dark:text-white select-none none">{"By "}</span>
+              <em className="bg-main dark:text-black">Soonbro</em>
+              <div className="flex flex-row items-center justify-center w-full">
+                <AnimatedTooltip items={soonbro} />
+              </div>
+            </a>
+            <ModeToggle />
+          </div>
         </div>
       </div>
       <div className="flex w-full max-w-5xl justify-stretch mt-2 m650:flex-col sm:flex-col md:flex-row">
@@ -181,7 +185,7 @@ export default function Home() {
         </div>
         {/*<Textarea className="min-h-[480px] m-4" spellCheck="false" />*/}
         <Textarea
-          className="rounded-base min-h-[370px] mt-4 text-text border-2 border-border dark:border-darkBorder bg-main p-4 shadow-light dark:shadow-dark"
+          className="rounded-base min-h-[370px] mt-4 border-2 border-border dark:border-darkBorder bg-main p-4 shadow-light dark:shadow-dark"
           value={answer}
           setValue={setAnswer}
           placeholder=""
@@ -207,7 +211,7 @@ export default function Home() {
             <>
               {isComplete ? (
                 <Textarea
-                  className="max-w-5xl rounded-base min-h-[400px] mt-4 mb-12 text-text border-2 border-border dark:border-darkBorder bg-mainAccent p-4 shadow-light dark:shadow-dark"
+                  className="max-w-5xl rounded-base h-[80vh] mt-4 mb-12 border-2 border-border dark:border-darkBorder bg-mainAccent p-4 shadow-light dark:shadow-dark"
                   value={summary}
                   setValue={setSummary}
                   placeholder=""

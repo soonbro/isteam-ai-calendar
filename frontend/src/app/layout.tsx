@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+//import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 //import "/globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+//const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "건설IS팀 AI Calendar 일정 요약 - by.Soonbro",
@@ -18,10 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={inter.className}>
-        <>{children}</>
-        {/* <ThemeProvider defaultTheme="system">{children}</ThemeProvider> */}
-        <Toaster position="top-left" />
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          <>{children}</>
+          {/* <ThemeProvider defaultTheme="system">{children}</ThemeProvider> */}
+          <Toaster position="top-left" />
+        </ThemeProvider>
       </body>
     </html>
   );

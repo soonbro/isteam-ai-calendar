@@ -26,6 +26,8 @@ const config = {
         darkBg: 'var(--dark-bg)',
         darkText: '#eeefe9',
         darkBorder: 'var(--dark-border)',
+
+        secondaryBlack: '#1b1b1b',
       },
       translate: {
         boxShadowX: 'var(--horizontal-box-shadow)',

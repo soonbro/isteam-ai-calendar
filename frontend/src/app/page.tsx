@@ -123,7 +123,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center px-10 bg-bg dark:bg-secondaryBlack overflow-hidden">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit dark:text-darkText lg:static lg:w-[320px] lg:justify-between lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-darkBg font-mono font-bold">
+        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-6 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit dark:text-darkText lg:static lg:w-[320px] lg:justify-between lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-darkBg font-mono font-bold">
           건설IS팀 AI Calendar 일정 요약
           {/*<ThemeToggle />*/}
         </p>
@@ -147,7 +147,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex w-full max-w-5xl justify-stretch mt-2 m650:flex-col sm:flex-col md:flex-row">
-        <div className="flex flex-col space-y-4 w-full max-w-5xl mt-5 m650:items-center sm:items-start">
+        <div className="flex flex-col space-y-4 w-full max-w-5xl mt-20 lg:mt-5 m650:items-center sm:items-start">
           <div className="flex space-x-1 items-end">
             <Select onValueChange={setModel}>
               <SelectTrigger className="bg-neutral-300 w-[180px]">
@@ -185,7 +185,7 @@ export default function Home() {
         </div>
         {/*<Textarea className="min-h-[480px] m-4" spellCheck="false" />*/}
         <Textarea
-          className="rounded-base min-h-[370px] mt-4 border-2 border-border dark:border-darkBorder bg-main p-4 shadow-light dark:shadow-dark"
+          className="rounded-base min-h-[370px] mt-4 md:mt-20 lg:mt-4 border-2 border-border dark:border-darkBorder bg-main p-4 shadow-light dark:shadow-dark"
           value={answer}
           setValue={setAnswer}
           placeholder=""
